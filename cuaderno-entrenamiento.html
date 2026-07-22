@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuaderno de Entrenamiento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pitch: #0F221B;
+    --pitch-2: #16302A;
+    --card: #1B3A31;
+    --card-line: #2B4E43;
+    --chalk: #ECE7DA;
+    --chalk-dim: #A9BDB2;
+    --clay: #C9622B;
+    --clay-light: #E8935E;
+    --gold: #D8B65C;
+    --danger: #C9622B;
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: var(--pitch);
+    color: var(--chalk);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+    padding-bottom:60px;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:20px 16px 40px;}
+
+  header.top{
+    padding: 22px 4px 18px;
+    border-bottom:1px solid var(--card-line);
+    margin-bottom:18px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color: var(--clay-light);
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Oswald', sans-serif;
+    font-weight:700;
+    font-size:30px;
+    letter-spacing:.01em;
+    margin:0 0 4px;
+    text-transform:uppercase;
+  }
+  .sub{
+    color: var(--chalk-dim);
+    font-size:13.5px;
+    line-height:1.5;
+  }
+
+  .tabs{
+    display:flex;
+    gap:8px;
+    margin:20px 0 6px;
+  }
+  .tab{
+    flex:1;
+    font-family:'Oswald', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    font-size:15px;
+    font-weight:600;
+    padding:12px 10px;
+    background:var(--card);
+    border:1px solid var(--card-line);
+    border-radius: 10px;
+    color: var(--chalk-dim);
+    cursor:pointer;
+    text-align:center;
+    transition: all .15s ease;
+  }
+  .tab.active{
+    background: var(--clay);
+    border-color: var(--clay);
+    color: #1B0E06;
+  }
+  .day-meta{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color: var(--chalk-dim);
+    padding: 10px 2px 22px;
+    display:flex;
+    justify-content:space-between;
+    border-bottom:1px dashed var(--card-line);
+    margin-bottom:20px;
+  }
+
+  .block-header{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin: 30px 0 12px;
+  }
+  .block-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:.1em;
+    padding:3px 8px;
+    border-radius:5px;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .block-tag.fijo{ background: rgba(216,182,92,.15); color: var(--gold); border:1px solid rgba(216,182,92,.4);}
+  .block-tag.rotativo{ background: rgba(201,98,43,.15); color: var(--clay-light); border:1px solid rgba(201,98,43,.4);}
+  .block-title{
+    font-family:'Oswald', sans-serif;
+    font-size:16.5px;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    color: var(--chalk);
+  }
+  .block-note{
+    font-size:12px;
+    color: var(--chalk-dim);
+    margin: -6px 0 14px;
+    line-height:1.5;
+  }
+
+  .card{
+    background: var(--card);
+    border:1px solid var(--card-line);
+    border-radius: var(--radius);
+    padding:14px 14px 16px;
+    margin-bottom:10px;
+  }
+  .card-top{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .icon-box{
+    flex:0 0 56px;
+    width:56px;height:56px;
+    border-radius:10px;
+    background: var(--pitch-2);
+    border:1px solid var(--card-line);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .icon-box svg{width:36px;height:36px;stroke:var(--clay-light);}
+  .card-info{flex:1;min-width:0;}
+  .ex-name{
+    font-family:'Oswald', sans-serif;
+    font-size:16px;
+    font-weight:500;
+    text-transform:uppercase;
+    letter-spacing:.01em;
+    margin:0 0 3px;
+  }
+  .ex-meta{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color: var(--gold);
+    margin-bottom:6px;
+  }
+  .ex-cue{
+    font-size:12.5px;
+    color: var(--chalk-dim);
+    line-height:1.5;
+  }
+  .yt-btn{
+    display:inline-block;
+    margin-top:9px;
+    font-family:'Oswald',sans-serif;
+    font-size:11.5px;
+    font-weight:500;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    color: var(--clay-light);
+    text-decoration:none;
+    border:1px solid var(--clay);
+    border-radius:7px;
+    padding:5px 11px;
+    transition: all .15s ease;
+  }
+  .yt-btn:active{ background: var(--clay); color:#1B0E06; }
+  .ex-time{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color: var(--chalk-dim);
+    flex:0 0 auto;
+    text-align:right;
+  }
+
+  .log-row{
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+    align-items:center;
+  }
+  .log-row input{
+    background: var(--pitch-2);
+    border:1px solid var(--card-line);
+    border-radius:8px;
+    color: var(--chalk);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    padding:8px 10px;
+    width:0;
+    flex:1;
+  }
+  .log-row input::placeholder{color:#5C7267;}
+  .log-row button{
+    background: var(--clay);
+    border:none;
+    color:#1B0E06;
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    text-transform:uppercase;
+    font-size:12px;
+    letter-spacing:.03em;
+    border-radius:8px;
+    padding:9px 14px;
+    cursor:pointer;
+    flex:0 0 auto;
+  }
+  .log-row button:active{transform:scale(.97);}
+  .history{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    margin-top:9px;
+  }
+  .chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color: var(--chalk-dim);
+    background: var(--pitch-2);
+    border:1px solid var(--card-line);
+    padding:3px 7px;
+    border-radius:6px;
+  }
+  .chip.latest{color:var(--clay-light);border-color:var(--clay);}
+
+  .rule-box{
+    margin-top:26px;
+    padding:14px 16px;
+    background: rgba(216,182,92,.08);
+    border:1px solid rgba(216,182,92,.3);
+    border-radius: var(--radius);
+    font-size:12.5px;
+    color: var(--chalk-dim);
+    line-height:1.6;
+  }
+  .rule-box b{color:var(--gold);}
+
+  .footer-note{
+    text-align:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:#5C7267;
+    margin-top:30px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">Fútbol · Tenis · Golf</div>
+    <h1>Cuaderno de Entrenamiento</h1>
+    <div class="sub">Fuerza, rotación y fluidez. Anota tus pesos cada semana y ve tu progreso.</div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" data-day="martes">Martes</div>
+    <div class="tab" data-day="jueves">Jueves</div>
+  </div>
+  <div class="day-meta">
+    <span id="day-focus"></span>
+    <span id="day-time"></span>
+  </div>
+
+  <div id="content"></div>
+
+  <div class="footer-note">Los datos quedan guardados en este dispositivo/artefacto — se suman cada vez que registras un peso.</div>
+</div>
+
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+<g id="ic-squat" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="4" r="2"/><path d="M12 6v5M8 11h8M9 11l-1 8M15 11l1 8M8 19h3M13 19h3"/>
+</g>
+<g id="ic-lunge" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="10" cy="4" r="2"/><path d="M10 6l2 5M12 11l6 2M12 11l-2 8M17 15l1 5M9 19l1-8"/>
+</g>
+<g id="ic-rotate" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="5" r="2"/><path d="M12 7v6M8 10l8 3M9 21l3-8 3 8"/><path d="M17 4a8 8 0 0 1 3 6" /><path d="M20 8l1-3 2 1"/>
+</g>
+<g id="ic-press" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="4" r="2"/><path d="M12 6v6M6 8l6 2 6-2M12 12l-3 8M12 12l3 8"/>
+</g>
+<g id="ic-row" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="9" cy="4" r="2"/><path d="M9 6v6M9 8l7-1M9 12l-2 8M9 12l4 8"/>
+</g>
+<g id="ic-plank" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="5" cy="9" r="2"/><path d="M7 10l13 5M8 12l-3 7M19 15l2 6"/>
+</g>
+<g id="ic-throw" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="9" cy="5" r="2"/><path d="M9 7v6M6 9l6 8M9 13l-2 8M9 13l4 7"/><path d="M17 5l3 2-2 3"/>
+</g>
+<g id="ic-stretch" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="4" r="2"/><path d="M12 6v6M9 9l6-1M12 12l-2 8M12 12l4 8"/>
+</g>
+<g id="ic-jump" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="3" r="2"/><path d="M12 5v5M8 7l8 0M9 10l-2 7M15 10l2 7"/><path d="M4 21l3-3M20 21l-3-3"/>
+</g>
+<g id="ic-sprint" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="14" cy="4" r="2"/><path d="M14 6l-2 4 4 2"/><path d="M12 10l-5 2M16 12l3 6M12 10l-1 9M6 22l3-8"/>
+</g>
+<g id="ic-band" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="9" cy="4" r="2"/><path d="M9 6v6M9 8l6 3M9 12l-2 8M9 12l4 8"/><path d="M4 8q4 2 0 6"/>
+</g>
+<g id="ic-mobility" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="5" r="2"/><path d="M12 7v5M9 9l3-1 3 3M12 12l-3 3-1 5M12 12l3 3v5"/>
+</g>
+<g id="ic-core" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="6" cy="9" r="2"/><path d="M8 10l6 1M14 11l6-2M14 11l3 7M14 11l-1 3-4 2"/>
+</g>
+<g id="ic-bridge" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="4" cy="16" r="2"/><path d="M6 16h5M11 16l4-5M15 11l4 1M11 16l1 6M15 11l1 6"/><path d="M2 22h20" stroke-dasharray="1 2.5"/>
+</g>
+<g id="ic-hamcurl" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="4" cy="7" r="2"/><path d="M6 8h13M12 8l1 8M13 16l5-4"/><path d="M2 20h20" stroke-dasharray="1 2.5"/>
+</g>
+<g id="ic-legext" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="7" cy="5" r="2"/><path d="M7 7v6M7 13l6 1M13 14l6-4M7 13l-1 8"/><path d="M2 21h13M18 8v6" stroke-dasharray="1 2.5"/>
+</g>
+<g id="ic-calfraise" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="3" r="2"/><path d="M12 5v7M9 8l3-1 3 1M12 12l-2 7M12 12l2 7"/><path d="M8 21l2-2M16 21l-2-2"/>
+</g>
+<g id="ic-cossack" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="7" cy="4" r="2"/><path d="M7 6v6M4 9l3-1 5 2M7 12l-3 8M7 12l6 1 5 7"/>
+</g>
+<g id="ic-quadruped" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="18" cy="7" r="2"/><path d="M16 9l-11 4M9 12l0 8M9 12l6 1M15 13l1 7"/><path d="M4 20h18" stroke-dasharray="1 2.5"/>
+</g>
+<g id="ic-pallof" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="18" cy="4" r="2"/><path d="M18 6v6M12 9l6-3M12 9l-5 0M12 9l-2 8M18 12l0 8"/><path d="M4 9q1.5 0 1.5 1.5T4 12" />
+</g>
+</defs>
+</svg>
+
+<script>
+const DATA = {
+  martes: {
+    focus: "Fuerza máxima · piernas y protección",
+    time: "~75 min",
+    blocks: [
+      { title:"Activación / movilidad", tag:null, note:null, exs:[
+        {id:"m-deadbug", yt:"dead bug exercise how to", name:"Dead bug", icon:"ic-core", meta:"2×10 c/lado", time:"3 min", cue:"Boca arriba, rodillas y cadera a 90°. Bajas brazo y pierna contraria sin despegar lumbar del suelo."},
+        {id:"m-birddog", yt:"bird dog exercise proper form", name:"Bird dog", icon:"ic-quadruped", meta:"2×10 c/lado", time:"3 min", cue:"En cuatro apoyos, extiendes brazo y pierna contraria a la vez, cadera y hombros nivelados."},
+        {id:"m-9090", yt:"90 90 hip mobility drill", name:"Movilidad de cadera 90/90", icon:"ic-mobility", meta:"2×8 c/lado", time:"3 min", cue:"Sentado, ambas piernas dobladas a 90° en 'Z', rotas de un lado a otro sin usar manos."},
+        {id:"m-ankle", yt:"ankle rocker mobility drill", name:"Ankle rockers", icon:"ic-mobility", meta:"2×10", time:"2 min", cue:"Semi-estocada, empujas rodilla adelante sobre el pie, talón siempre pegado al suelo."},
+        {id:"m-glutebridge", yt:"glute bridge exercise form", name:"Puente de glúteo", icon:"ic-bridge", meta:"2×12", time:"2 min", cue:"Boca arriba, rodillas dobladas. Subes cadera apretando glúteo, línea recta rodilla-cadera-hombro."},
+      ]},
+      { title:"Bloque principal", tag:null, note:"Columna neutra todo el rango — si hay molestia lumbar, baja el peso, no la profundidad.", exs:[
+        {id:"m-squat", yt:"barbell back squat proper form", name:"Sentadilla con barra", icon:"ic-squat", meta:"4×5 · 80-90kg", time:"12 min", cue:"Técnica y control excéntrico ante todo. No subir peso sin buena forma."},
+        {id:"m-legpress", yt:"bulgarian split squat form", name:"Prensa o zancada búlgara", icon:"ic-lunge", meta:"3×8 c/pierna", time:"8 min", cue:"Elige según cómo llegues de rodilla ese día."},
+        {id:"m-hamcurl", yt:"seated leg curl machine hamstring", name:"Curl femoral (isquios)", icon:"ic-hamcurl", meta:"3×10", time:"5 min", cue:"Máquina de isquios, rango completo controlado."},
+        {id:"m-legext", yt:"leg extension machine quads", name:"Extensión de cuádriceps", icon:"ic-legext", meta:"3×12", time:"5 min", cue:"Foco en la contracción arriba, sin balanceo."},
+        {id:"m-calf", yt:"standing calf raise exercise", name:"Elevación de talones", icon:"ic-calfraise", meta:"3×15", time:"4 min", cue:"Gemelos — clave para propulsión en tenis y golf, no te lo saltes."},
+      ]},
+      { title:"Accesorio superior", tag:null, note:null, exs:[
+        {id:"m-bench", yt:"barbell bench press form", name:"Press banca", icon:"ic-press", meta:"3×8 · 15kg/lado", time:"6 min", cue:"Mantenimiento, no es prioridad para tus 3 deportes."},
+        {id:"m-row", yt:"single arm dumbbell row form", name:"Remo con mancuerna", icon:"ic-row", meta:"3×10", time:"5 min", cue:"Espalda plana, jala con el codo, no con el hombro."},
+      ]},
+      { title:"Cierre", tag:null, note:null, exs:[
+        {id:"m-plank", yt:"front plank proper form", name:"Plancha frontal", icon:"ic-plank", meta:"2×20-30 seg", time:"3 min", cue:"Isométrico, protege el disco. Cuerpo en línea recta, sin hundir cadera."},
+        {id:"m-piriformis", yt:"figure 4 piriformis stretch", name:"Estiramiento piriforme/glúteo", icon:"ic-stretch", meta:"30 seg c/lado", time:"2 min", cue:"Boca arriba, tobillo cruzado sobre rodilla contraria en forma de '4', jalas hacia el pecho."},
+        {id:"m-quadstretch", yt:"standing quad stretch", name:"Estiramiento cuádriceps/isquios", icon:"ic-stretch", meta:"30 seg c/lado", time:"2 min", cue:"Suave, nunca estático agresivo en frío."},
+      ]},
+    ]
+  },
+  jueves: {
+    focus: "Potencia, rotación y fluidez",
+    time: "~60-65 min",
+    blocks: [
+      { title:"Movilidad dinámica", tag:"fijo", note:"No se negocia — es la base de todo lo demás.", exs:[
+        {id:"j-catcow", yt:"cat cow stretch", name:"Cat-cow", icon:"ic-quadruped", meta:"1×10", time:"2 min", cue:"Cuatro apoyos, alternas arquear (gato) y hundir (vaca) la espalda, lento."},
+        {id:"j-openbook", yt:"open book thoracic rotation exercise", name:"Rotaciones torácicas (open books)", icon:"ic-rotate", meta:"1-2×10 c/lado", time:"3 min", cue:"De lado, rodillas dobladas al frente, abres brazo de arriba rotando solo el tronco, cadera quieta."},
+        {id:"j-cossack", yt:"cossack squat how to", name:"Cossack squat", icon:"ic-cossack", meta:"1-2×8 c/lado", time:"3 min", cue:"Piernas abiertas, bajas cadera hacia un lado flexionando esa rodilla, la otra pierna extendida."},
+        {id:"j-9090", yt:"90 90 hip mobility drill", name:"Movilidad de cadera 90/90", icon:"ic-mobility", meta:"2×8 c/lado", time:"3 min", cue:"Más cadera disponible = menos robo de tu lumbar al rotar."},
+        {id:"j-shoulderband", yt:"shoulder internal rotation band exercise", name:"Rotación interna hombro (banda)", icon:"ic-band", meta:"2-3×10", time:"3 min", cue:"Codo pegado al cuerpo a 90°, jalas antebrazo cruzando el torso hacia adentro, controlado. Foco hombro derecho."},
+        {id:"j-tspine", yt:"half kneeling thoracic rotation band", name:"Separación torácica (t-spine) con banda", icon:"ic-band", meta:"2×10 c/lado", time:"3 min", cue:"Estocada con rodilla en el suelo, rotas solo el tronco superior, cadera totalmente fija."},
+      ]},
+      { title:"Bloque rotacional específico", tag:"fijo", note:"Carga liviana — el objetivo es rango y velocidad, no resistencia.", exs:[
+        {id:"j-wood-golf", yt:"cable wood chop low to high golf", name:"Woodchopper — sentido revés/golf", icon:"ic-rotate", meta:"4×10", time:"5 min", cue:"Cable o banda, cortas en diagonal rotando desde cadera y tronco. Prioridad de la sesión."},
+        {id:"j-wood-fh", yt:"cable wood chop high to low", name:"Woodchopper — sentido forehand", icon:"ic-rotate", meta:"2×10", time:"3 min", cue:"Mantenimiento, ya lo tienes fluido de toda una vida jugando."},
+        {id:"j-scoop-golf", yt:"rotational scoop toss medicine ball golf", name:"Scoop toss — sentido revés/golf", icon:"ic-throw", meta:"3×8", time:"4 min", cue:"Mancuerna abajo a un costado, rotación explosiva llevándola arriba-adelante. Simula el swing."},
+        {id:"j-scoop-fh", yt:"rotational scoop toss medicine ball", name:"Scoop toss — sentido forehand", icon:"ic-throw", meta:"2×8", time:"3 min", cue:"Mismo movimiento, lado contrario, menos volumen."},
+        {id:"j-crossbody", yt:"cross body cable chop rotational", name:"Cross-body chop", icon:"ic-rotate", meta:"3×10", time:"4 min", cue:"El brazo termina cruzado sobre el hombro contrario. Lento en el último tramo — ahí es donde se te corta el revés."},
+      ]},
+      { title:"Rotativo — elige 1-2 según cómo llegaste", tag:"rotativo", note:"Cargado de piernas → saltas sentadilla/sprint y dejas solo press mancuerna. Fresco → puedes meter todo.", exs:[
+        {id:"j-jumpsquat", yt:"box jump proper form", name:"Sentadilla con salto / box jump", icon:"ic-jump", meta:"3×5", time:"4 min", cue:"Explosivo, no pesado. Aterriza suave flexionando rodillas."},
+        {id:"j-sprint", yt:"acceleration sprint drills football", name:"Sprints / aceleraciones", icon:"ic-sprint", meta:"4-5 reps · 10-15m", time:"5 min", cue:"Máxima velocidad, foco en salida explosiva."},
+        {id:"j-dbpress", yt:"alternating dumbbell bench press", name:"Press mancuerna alterno", icon:"ic-press", meta:"3×10", time:"4 min", cue:"Un brazo empuja mientras el otro sostiene abajo — obliga a estabilizar rotación de tronco."},
+      ]},
+      { title:"Core anti-rotación + cierre", tag:"fijo", note:null, exs:[
+        {id:"j-pallof", yt:"pallof press anti rotation exercise", name:"Pallof press", icon:"ic-pallof", meta:"3×10 c/lado", time:"4 min", cue:"De costado al anclaje, extiendes brazos resistiendo que el cuerpo rote. El más importante para tu disco lumbar."},
+        {id:"j-golfswing", yt:"weighted club golf swing training", name:"Swing de golf con palo lastrado", icon:"ic-throw", meta:"2-3 min", time:"3 min", cue:"Foco 100% en soltura y rango completo, no en fuerza."},
+        {id:"j-backhandshadow", yt:"two handed backhand shadow swing drill", name:"Sombra de revés con banda", icon:"ic-band", meta:"2-3 min", time:"3 min", cue:"Amplitud completa del giro, gesto técnico real con resistencia leve."},
+        {id:"j-shoulderstretch", yt:"cross body shoulder stretch", name:"Cross-body shoulder stretch", icon:"ic-stretch", meta:"30 seg", time:"1 min", cue:"Brazo derecho cruzando el pecho, presionas suave con la otra mano."},
+      ]},
+    ]
+  }
+};
+
+const RULES = {
+  martes: `<b>Regla clave:</b> rota y flexiona siempre desde cadera/torácica, nunca desde la lumbar. Molestia en glúteo/isquio = normal. Molestia específica en zona baja de la espalda = señal de alerta, ajusta peso o rango.`,
+  jueves: `<b>Regla clave:</b> si sientes que tu lumbar "hace el trabajo" en vez de acompañar, para y baja carga. Molestia en lumbar baja durante el bloque rotacional = alerta.`
+};
+
+let currentDay = 'martes';
+let store = {};
+
+async function loadStore(){
+  try{
+    const res = await window.storage.get('training-log');
+    store = res ? JSON.parse(res.value) : {};
+  }catch(e){ store = {}; }
+}
+
+async function saveEntry(exId, weight, reps){
+  if(!weight && !reps) return;
+  const today = new Date().toISOString().slice(0,10);
+  if(!store[exId]) store[exId] = [];
+  store[exId].push({date: today, weight: weight||'', reps: reps||''});
+  if(store[exId].length > 12) store[exId] = store[exId].slice(-12);
+  try{
+    await window.storage.set('training-log', JSON.stringify(store));
+  }catch(e){ console.error('No se pudo guardar', e); }
+  render();
+}
+
+function iconSvg(id){
+  return `<svg viewBox="0 0 24 24"><use href="#${id}"/></svg>`;
+}
+
+function historyChips(exId){
+  const entries = store[exId] || [];
+  if(entries.length===0) return `<div class="history"><span class="chip">Sin registros aún</span></div>`;
+  const last = entries.slice(-4).reverse();
+  return `<div class="history">${last.map((e,i)=>{
+    const label = [e.weight?e.weight+'kg':null, e.reps?e.reps+'r':null].filter(Boolean).join(' · ') || '—';
+    const d = e.date.slice(5);
+    return `<span class="chip ${i===0?'latest':''}">${d}: ${label}</span>`;
+  }).join('')}</div>`;
+}
+
+function exerciseCard(ex){
+  const ytQuery = encodeURIComponent(ex.yt || (ex.name + ' exercise'));
+  const ytUrl = `https://www.youtube.com/results?search_query=${ytQuery}`;
+  return `
+  <div class="card">
+    <div class="card-top">
+      <div class="icon-box">${iconSvg(ex.icon)}</div>
+      <div class="card-info">
+        <div class="ex-name">${ex.name}</div>
+        <div class="ex-meta">${ex.meta}</div>
+        <div class="ex-cue">${ex.cue}</div>
+        <a class="yt-btn" href="${ytUrl}" target="_blank" rel="noopener">▶ Ver video</a>
+      </div>
+      <div class="ex-time">${ex.time}</div>
+    </div>
+    <div class="log-row">
+      <input type="text" inputmode="decimal" placeholder="kg" id="w-${ex.id}">
+      <input type="text" inputmode="numeric" placeholder="reps" id="r-${ex.id}">
+      <button onclick="handleSave('${ex.id}')">Guardar</button>
+    </div>
+    ${historyChips(ex.id)}
+  </div>`;
+}
+
+function blockHtml(block){
+  const tagHtml = block.tag ? `<span class="block-tag ${block.tag}">${block.tag}</span>` : '';
+  const noteHtml = block.note ? `<div class="block-note">${block.note}</div>` : '';
+  return `
+    <div class="block-header">${tagHtml}<span class="block-title">${block.title}</span></div>
+    ${noteHtml}
+    ${block.exs.map(exerciseCard).join('')}
+  `;
+}
+
+function render(){
+  const d = DATA[currentDay];
+  document.getElementById('day-focus').textContent = d.focus;
+  document.getElementById('day-time').textContent = d.time;
+  document.getElementById('content').innerHTML =
+    d.blocks.map(blockHtml).join('') +
+    `<div class="rule-box">${RULES[currentDay]}</div>`;
+}
+
+function handleSave(exId){
+  const w = document.getElementById('w-'+exId).value.trim();
+  const r = document.getElementById('r-'+exId).value.trim();
+  saveEntry(exId, w, r);
+}
+
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    currentDay = tab.dataset.day;
+    render();
+  });
+});
+
+(async function init(){
+  await loadStore();
+  render();
+})();
+</script>
+</body>
+</html>
